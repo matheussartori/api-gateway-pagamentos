@@ -30,10 +30,11 @@ module.exports = function(app) {
     pagamentoDao.salva(pagamento, function(error, result) {
       if(error) {
         console.log('Erro ao inserir no banco: ' + error);
-        res.status(400).send(error);
+        res.status(500).send(error);
       } else {
         console.log('Pagamento criado');
-        res.json(pagamento);
+        res.location('/pagamentos/pagamento/' + result.insertId);
+        res.status(201).json(pagamento);
       }
     });
 
