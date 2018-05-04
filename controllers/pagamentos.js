@@ -45,7 +45,6 @@ module.exports = function (app) {
     });
 
     app.post('/pagamentos/pagamento', function (req, res) {
-
         req.assert('forma_de_pagamento',
             'Forma de pagamento é obrigatório!').notEmpty();
         req.assert('valor',
@@ -72,9 +71,25 @@ module.exports = function (app) {
                 console.log('Erro ao inserir no banco: ' + error);
                 res.status(500).send(error);
             } else {
+                pagamento.id = result.insertId
                 console.log('Pagamento criado');
-                res.location('/pagamentos/pagamento/' + result.insertId);
-                res.status(201).json(pagamento);
+                res.location('/pagamentos/pagamento/' + pagamento.id);
+                var response = {
+                    dados_do_pagamento: pagamento,
+                    links: [
+                        {
+                            href: "http://localhost:3000/pagamentos/pagamento/" + pagamento.id,
+                            rel: "Confirmar o pagamento",
+                            method: "PUT"
+                        },
+                        {
+                            href: "http://localhost:3000/pagamentos/pagamento/" + pagamento.id,
+                            rel: "Cancelar o pagamento",
+                            method: "DELETE"
+                        }
+                    ]
+                }
+                res.status(201).json(response);
             }
         });
 
