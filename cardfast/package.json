@@ -9,7 +9,9 @@
   "author": "Matheus Sartori",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.18.2",
     "consign": "^0.1.6",
-    "express": "^4.16.3"
+    "express": "^4.16.3",
+    "express-validator": "^5.1.2"
   }
 }
