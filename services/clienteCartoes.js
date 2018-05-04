@@ -1,10 +1,15 @@
 let restify = require('restify-clients');
 
-let cliente = restify.createJsonClient({
-	url: "http://localhost:3001"
-});
+function CartoesClient() {
+	this._cliente = restify.createJsonClient({
+		url: "http://localhost:3001"
+	});
+}
 
-cliente.post('/cartoes/autoriza', function(error, req, res, result) {
-	console.log('Consumindo serviço de cartões...');
-	console.log(result);
-});
+CartoesClient.prototype.autoriza = function(cartao, callback) {
+	this._cliente.post('/cartoes/autoriza', cartao, callback);
+}
+
+module.exports = function() {
+	return CartoesClient;
+}
