@@ -78,9 +78,34 @@ module.exports = function (app) {
                     console.log(cartao);
 
                     var clienteCartoes = new app.services.clienteCartoes();
-                    clienteCartoes.autoriza(cartao, function(exception, request, response, data) {
-                        console.log(data);
-                        res.status(201).json(data);
+                    clienteCartoes.autoriza(cartao, function(exception, request, response, retorno) {
+                        if(exception) {
+                            console.log(exception);
+                            res.status(400).send(exception);
+                            return;
+                        }
+                        console.log(retorno);
+
+                        res.location('/pagamentos/pagamento/' + pagamento.id);
+
+                        var response = {
+                            dados_do_pagamento: pagamento,
+                            cartao: retorno,
+                            links: [
+                                {
+                                    href: "http://localhost:3000/pagamentos/pagamento/" + pagamento.id,
+                                    rel: "Confirmar pagamento",
+                                    method: "PUT"
+                                },
+                                {
+                                    href: "http://localhost:3000/pagamentos/pagamento/" + pagamento.id,
+                                    rel: "Cancelar pagamento",
+                                    method: "DELETE"
+                                }
+                            ]
+                        }
+
+                        res.status(201).json(response);
                         return;
                     });
                 } else {
