@@ -83,9 +83,6 @@ module.exports = function (app) {
                         res.status(201).json(data);
                         return;
                     });
-
-                    res.status(201).json(cartao);
-                    return;
                 } else {
                     res.location('/pagamentos/pagamento/' + pagamento.id);
                     var response = {
