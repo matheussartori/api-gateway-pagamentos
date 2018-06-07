@@ -19,6 +19,7 @@
     "express": "^4.16.3",
     "express-validator": "^5.1.2",
     "mysql": "^2.15.0",
-    "restify-clients": "^2.0.2"
+    "restify-clients": "^2.0.2",
+    "soap": "^0.24.0"
   }
 }
