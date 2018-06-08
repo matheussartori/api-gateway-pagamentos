@@ -9,18 +9,31 @@ module.exports = function (app) {
 
       console.log('Consultando pagamento:' + id);
 
-      var connection = app.persistence.connectionFactory();
-      var pagamentoDao = new app.persistence.pagamentos.PagamentoDao(connection);
+      var memcachedClient = app.services.memcachedClient();
 
-      pagamentoDao.buscaPorId(id, function(error,resultado) {
-        if(error) {
-          console.log('Erro ao consultar pagamento. ' + error);
-          res.status(500).send(error);
+      memcachedClient.get('pagamento-' + id, function(error,result) {
+        if(error || !result) {
+          console.log('MISS - Chave não encontrada');
+
+          var connection = app.persistence.connectionFactory();
+          var pagamentoDao = new app.persistence.pagamentos.PagamentoDao(connection);
+
+          pagamentoDao.buscaPorId(id, function(error,resultado) {
+            if(error) {
+              console.log('Erro ao consultar pagamento. ' + error);
+              res.status(500).send(error);
+              return;
+            }
+            console.log('Pagamento encontrado: ' + JSON.stringify(resultado));
+            res.json(resultado);
+            return;
+          });
+
+        } else {
+          console.log('HIT - Valor: ' + JSON.stringify(result));
+          res.json(result);
           return;
         }
-        console.log('Pagamento encontrado: ' + JSON.stringify(resultado));
-        res.json(resultado);
-        return;
       });
 
     });
@@ -94,6 +107,12 @@ module.exports = function (app) {
             } else {
                 pagamento.id = result.insertId
                 console.log('Pagamento criado');
+
+                var memcachedClient = app.services.memcachedClient();
+                memcachedClient.set('pagamento-' + pagamento.id, pagamento, 60000, function(error) {
+                  console.log('Nova chave adicionada ao cache: pagamento' + pagamento.id);
+                });
+
                 if(pagamento.forma_de_pagamento == 'cartao') {
                     var cartao = req.body["cartao"];
                     console.log(cartao);
