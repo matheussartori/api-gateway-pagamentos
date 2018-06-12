@@ -1,3 +1,4 @@
 node_modules/
 .idea/
 cardfast/node_modules/
+logs/

@@ -21,6 +21,7 @@
     "memcached": "^2.2.2",
     "mysql": "^2.15.0",
     "restify-clients": "^2.0.2",
-    "soap": "^0.24.0"
+    "soap": "^0.24.0",
+    "winston": "^2.4.2"
   }
 }
